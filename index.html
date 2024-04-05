@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="/invitaion.css">
+    <title>A4 Page Print</title>
+</head>
+<style>
+      /* Center the container horizontally */
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Main div */
+.main-div {
+    width: 297mm;
+    /* A4 width in landscape */
+    height: 210mm;
+    /* A4 height in landscape */
+    border: 1px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Sub divs */
+.sub-div {
+    width: 4in;
+    /* 5 inch width */
+    height: 6in;
+    /* 3 inch height */
+    border: 5px solid black;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 60px;
+    /* Gap between sub-divs */
+    border-radius: 25px;
+    overflow: auto;
+    /* Enable scrolling if content overflows */
+}
+#heading2, #heading4{
+ margin-left: 10px;
+ margin-top: 60px;
+}
+
+#heading1, #heading3{
+    text-decoration: underline;
+    position: absolute; margin-bottom: 520px; 
+   }
+   
+</style>
+<body>
+    <div class="container">
+        <div class="main-div" id="divToExport">
+            <div class="sub-div">
+                <h3 id="heading1" contenteditable='true' oninput="saveToLocal('heading1', this.innerText)">आमंत्रण</h3>
+                <h3 id="heading2" contenteditable="true" oninput="saveToLocal('heading2', this.innerText)">प्रिय</h3>
+            </div>
+            <div class="sub-div">
+                <h3 id="heading3"></h3>
+                <h3 id="heading4"></h3>
+            </div>
+
+        </div>
+    </div>
+    <script>
+        var h3Content = {
+            heading1: localStorage.getItem('heading1') || 'आमंत्रण',
+            heading2: localStorage.getItem('heading2') || 'प्रिय'
+        };
+
+        function saveToLocal(id, content) {
+            h3Content[id] = content.trim();
+            localStorage.setItem(id, content.trim());
+            document.getElementById('heading3').innerText = h3Content.heading1;
+            document.getElementById('heading4').innerText = h3Content.heading2;
+        }
+
+        // Populate h3 tags with initial content
+        document.getElementById('heading1').innerText = h3Content.heading1;
+        document.getElementById('heading2').innerText = h3Content.heading2;
+        document.getElementById('heading3').innerText = h3Content.heading1;
+        document.getElementById('heading4').innerText = h3Content.heading2;
+
+        function generatePDF() {
+
+            var isEditable = false;
+            document.querySelectorAll('h3').forEach(function (element) {
+                element.contentEditable = isEditable;
+            });
+
+            var element = document.getElementById('divToExport');
+            element.style.width = '11.69in';
+            element.style.height = '8.27in';
+
+            var opt = {
+                margin: 0.5,
+                filename: 'myfile.pdf',
+                image: { type: 'jpeg', quality: 10 },
+                html2canvas: { scale: 1 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape', precision: '12' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+    <button type="button" onclick="generatePDF()">Export to PDF</button>
+</body>
+
+</html>
